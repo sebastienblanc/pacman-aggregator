@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>chaosmonkeyboard - 1.0.0-SNAPSHOT</title>
+  <link rel="stylesheet" type="text/css" href="mystyle.css" media="screen" />
+ 
+</head>
+<body>
+<div class="main">
+<h1 class="title">Pacman Streams ! </h1>
+<div class="row" id="row-score">
+    <h2 id="score-board-title"></h2>
+    <table class="table" id="score1">
+        <tbody>
+            <tr>
+                <th>Player</th>
+                <th><img src="/images/pink.png" class="ghost"/></th>
+                <th><img src="/images/red.png" class="ghost"/></th>
+                <th><img src="/images/orange.png" class="ghost"/></th>
+                <th><img src="/images/blue.png" class="ghost"/></th>
+                <th>score</th>
+              </tr>
+        </tbody>
+    </table>
+    <table class="table" id="score">
+        <tbody>
+           
+        </tbody>
+</div>
+</div>
+
+</body>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script>
+    function showScore(data) {
+       $("#score").find('tbody').empty();
+       // deleteRows()
+        data.forEach(myFunction);
+        
+    }
+
+    function deleteRows() {
+        var rowCount = score.rows.length;
+        for (var i = rowCount - 1; i > 0; i--) {
+            score.deleteRow(i);
+        }
+    }
+
+    function myFunction(data) {
+        $("#score").find('tbody')
+                .append($('<tr' +' id=' + data.playerId +'>' ))
+                .append($('<td>').text(data.playerName))
+                .append($('<td>').text(data.pinky))
+                .append($('<td>').text(data.blinky))
+                .append($('<td>').text(data.clyde))        
+                .append($('<td>').text(data.inky)) 
+                .append($('<td class="scorestyle">').text(data.score))    
+    }
+
+   
+
+    function poll() {
+      // make Ajax call here, inside the callback call:
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+            console.log("host: " + location.host);
+            console.log("response: " +  this.responseText);
+            showScore(JSON.parse(this.responseText));
+          }
+       };
+       // polledURL = "http://" + location.host + "/api";
+       console.log(window.location.protocol);
+       console.log(window.location.host);
+       
+       polledURL = "/score/allscore";
+
+      
+       xhttp.open("GET", polledURL, true);
+       xhttp.send();
+
+       setTimeout(poll, 2000);
+      
+    }
+    setTimeout(poll, 1000);
+   /* var source = new EventSource("/score");
+    source.onmessage = function (event) {
+       
+        var incomingData = event.data
+        showScore(JSON.parse(incomingData));
+        }*/
+
+</script>
+</html>
